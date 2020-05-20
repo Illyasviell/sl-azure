@@ -12,7 +12,7 @@ import _ from 'lodash'
 import health from 'express-ping'
 
 
-const MongoClient = mongodb.MongoClient
+const MongoClient = mongodb.MongoClient;
 const uri = "mongodb+srv://SlimeDev:a1s2h3j4a5@cluster0-qnvfk.mongodb.net/test?retryWrites=true&w=majority";
 const client = new MongoClient(uri, { useNewUrlParser: true });
 client.connect(err => {
