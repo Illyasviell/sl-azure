@@ -7,7 +7,6 @@ import checkUser from './api/checkuser'
 import path from 'path'
 import fileUpload from 'express-fileupload'
 import morgan from 'morgan'
-import _ from 'lodash'
 import multer from 'multer'
 import health from 'express-ping'
 import fs from 'fs'
@@ -33,7 +32,10 @@ const ServerSockets = {
   firebrick: io(server["firebrick"]),
   magenta: io(server["magenta"])
 }
+/*
 
+
+ */
 const alfabet = ["a", "2", "e", "1", "f", "4", "d", "5", "c", "6", "a", "9", "d", "0", "b", "3", "6", "c", "8", "c", "4", "c", "1", "b", "a", "5", "e", "3", "1", "5", "6", "7", "1", "4", "5", "b", "e", "f", "f", "f", "1", "3", "4", "7", "9", "a", "e", "1", "d", "b", "2", "6", "b", "7", "7"]
 let users = {
 
@@ -53,7 +55,7 @@ setInterval(() => {
 }, 10)
 let x = express()
 let http = require("http").createServer(x)
-var ion = require("socket.io")(http, { wsEngine: "ws" })
+let ion = require("socket.io")(http, { wsEngine: "ws" })
 const PORT = process.env.PORT || 7002
 
 x.use(cors())
@@ -172,7 +174,7 @@ x.get("/cn", (req, res) => {
 ion.on("connection", function (socket) {
   numberOFConnectedClient++
   const bomb = setTimeout(() => {
-    if (clientData[socket.id] == undefined) {
+    if (onlineUser[socket.id] === undefined) {
       console.log(`${socket.id} is kicked`)
       socket.disconnect()
     } else {
@@ -205,7 +207,7 @@ ion.on("connection", function (socket) {
         const msg = JSON.parse(data)
         console.log(msg.receiver)
         console.log(onlineUser[msg.receiver])
-        if (onlineUser[msg.receiver] == true) {
+        if (onlineUser[msg.receiver] === true) {
           const data = msg
           console.log(msg)
           const d = {
@@ -218,7 +220,7 @@ ion.on("connection", function (socket) {
           callback("delivered")
         }
         else {
-          if (users[msg.receiver] != undefined) {
+          if (users[msg.receiver] !== undefined) {
             switch (users[msg.receiver]) {
               case server["azure"]:
                 ServerSockets.azure.emit("chat", data)
@@ -237,7 +239,7 @@ ion.on("connection", function (socket) {
             }
           }
           console.log("forwarded to navy")
-          SocketNavy.emit("store this chat please", { type: "object", data: msg })
+          ServerSockets.navy.emit("store this chat please", { type: "object", data: msg })
           callback("sent")
         }
       } catch (e) {
